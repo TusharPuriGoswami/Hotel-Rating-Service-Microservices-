@@ -16,7 +16,6 @@
     import org.springframework.stereotype.Component;
     import org.springframework.stereotype.Service;
     import org.springframework.web.client.RestTemplate;
-
     import java.util.ArrayList;
     import java.util.Arrays;
     import java.util.List;
@@ -56,7 +55,7 @@
         }
 
     ///         get single user by userId
-         public User getUser(String userId){
+         public User getUserById(String userId){
     ///         get single user from the database help of userRepository
              User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User is not found with the given id : " + userId));
     ///         Fetch rating of the above user from Rating Service

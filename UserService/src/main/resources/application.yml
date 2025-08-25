@@ -2,11 +2,15 @@ server:
   port: 8081
 
 spring:
-  # Eureka server is fetch the name by-default so don't use this
   application:
     name: USER-SERVICE
+  config:
+    import: optional:configserver:http://localhost:8085
+
+  # Eureka server is fetch the name by-default so don't use this
+
   datasource:
-    url: jdbc:mysql://localhost:3306/user-service
+    url: jdbc:mysql://localhost:3306/user-service?createDatabaseIfNotExist=true
     username: root
     password: 1212
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -19,12 +23,68 @@ spring:
       ddl-auto: update
     show-sql: true
 
+
+
 # by default true rahta h
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    fetch-registry: true
-    register-with-eureka: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka
+#eureka:
+# instance:
+#   prefer-ip-address: true
+# client:
+#   register-with-eureka: true
+#   fetch-registry: true
+#   service-url:
+#     defaultZone: http://localhost:8761/eureka
+
+
+management:
+  health:
+    circuitbreaker:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: ALWAYS
+
+
+# Resilience4j configurations
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      ratingHotelBreaker:
+        registerHealthIndicator: true
+        eventConsumerBufferSize: 10
+        failureRateThreshold: 50
+        minimumNumberOfCalls: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 6s
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowSize: 10
+        slidingWindowType: COUNT_BASED
+
+
+
+  retry:
+    .instances:
+      ratingHotelService:
+        max-attempts: 3
+        wait-duration: 5s
+
+
+# Rate Limiter Configurations
+
+  ratelimiter:
+    instances:
+      userRateLimiter:
+        limit-refresh-period: 4s
+        limit-for-period: 2
+        timeout-duration: 0s
+
+
+
+
+
+

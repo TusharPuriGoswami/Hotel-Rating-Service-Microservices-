@@ -47,7 +47,7 @@ public class HotelController {
     @DeleteMapping("/{hotelId}")
     public  ResponseEntity<String> deleteHotel(@PathVariable String hotelId){
          hotelService.deleteHotelById(hotelId);
-        return ResponseEntity.ok("User deleted successfully");
+        return ResponseEntity.ok("Hotel deleted successfully");
     }
 
     ///  Update Hotel By Hotel ID
